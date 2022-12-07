@@ -1,0 +1,67 @@
+Change Description
+==================
+
+limitpager is a Perl program which runs on each of the 4 ACIS Ops Real
+Time monitoring computers. The instances of limitpager on each of the
+4 machines are identical.
+
+When we are in Real Time Comm with Chandra, Limitpager accesses the real
+time data coming down from the spacecraft and checks several MSID's in
+order to determine if those values are within the Caution and Warning limits.
+If a Caution limit is violated, limitpager sends emails to the ACIS
+team. If a Warning limit is violated, limitpager sends both emails and
+text messages to the ACIS Team.
+
+One ACIS MSID: 1PIN1AT has a faulty transducer and emits a value above
+the Caution High limit. This is duly reported by limitpager in an
+email.  This is a known fault, and is ignored by the ACIS team, but is
+used as a "heartbeat" check of limitpager, the 4 machines limitpager
+runs on,  and the network.
+
+The updates included in this PR include some modification of the email
+addresses and text phone numbers.  Utilization of the OpsGenie alert
+system was added to the alerts.  The former text alert system was retained,
+however it was modified to send the texts out in a loop with a delay
+between the texts to prevent "throttling" by the Verizon service. So
+the ACIS Teams receive text alerts of a Warning limit violation from
+redundant sources.
+
+
+Files Changed or added:
+=======================
+
+
+The updates can be seen here:
+
+https://github.com/acisops/lr/pull/35
+
+Testing:
+======== 
+
+Program tests were carried out running a version during comms to
+assure that the emails and texts get through.  The 1PIN1AT "heartbeat"
+emails arrived every comm from both OpsGenie and the email systems.
+The Red alert emails and texts arrived during the OCT3122 1DPAMZT red alert.
+
+
+All tests passed.
+
+
+
+Interface impacts
+=================
+
+None
+
+
+Review
+====== 
+
+ACIS Ops
+
+
+Deployment Plan
+===============
+
+Will be deployed after FSDS approval.
+
