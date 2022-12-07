@@ -18,8 +18,8 @@ email.  This is a known fault, and is ignored by the ACIS team, but is
 used as a "heartbeat" check of limitpager, the 4 machines limitpager
 runs on,  and the network.
 
-The updates included in this PR include some modification of the email
-addresses and text phone numbers.  Utilization of the OpsGenie alert
+The updates included in this PR include some modification of the
+recipient email addresses and text phone numbers.  Utilization of the OpsGenie alert
 system was added to the alerts.  The former text alert system was retained,
 however it was modified to send the texts out in a loop with a delay
 between the texts to prevent "throttling" by the Verizon service. So
@@ -33,7 +33,7 @@ Files Changed or added:
 
 The updates can be seen here:
 
-https://github.com/acisops/lr/pull/35
+https://github.com/acisops/RT_Web_Pages/pull/1
 
 Testing:
 ======== 
