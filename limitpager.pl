@@ -957,7 +957,7 @@ if ($diff <= 0.09)
 	   # the loops
 	   foreach (@RedAlertTextList)
 	     {
-	       open(MAIL, "|mailx -s 'TEST TEST TEST  - ACIS Ops TEXT TEST' $_");
+	       open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' $_");
                print MAIL $msg;
 	       close MAIL;
 
