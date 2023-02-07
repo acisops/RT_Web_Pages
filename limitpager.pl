@@ -139,6 +139,11 @@
 #         - Added OpsGenie email addresses to the alert email and text
 #           lists
 #
+# Update: February 6, 2023
+#              limitpager_V2.5.pl
+#              - arranged for the URL specified in alert emails to be the one
+#                specific to the R/T machine that is issuing the alert email.
+#
 ###########################################################################
 
 # use warnings;
@@ -146,10 +151,15 @@ use Sys::Hostname;
 
 require "/export/acis-flight/UTILITIES/GetNodeName.pl";
 require "/export/acis-flight/UTILITIES/ReadLimitsFile.pl";
-
+require "/export/acis-flight/UTILITIES/GetUDP.pl";
 
 # Obtain the upcased node name
 $host = GetNodeName();
+
+# Read the values output by a call to GetUDP.pl
+($myAcornUDP, $myPmonUDP, $myVloc, $myBaseURL, $myPEloc) = GetUDP();
+
+my $Full_URL = "http:///".$myBaseURL."/acis-mean.html";
 
 # Read in the limits file data
 my %userlimits = ReadLimitsFile();
@@ -920,7 +930,7 @@ if ($diff <= 0.09)
 	    $msg .= sprintf "Current OBSID: $obsid\n";
 	    $msg .= sprintf "Current Altitude / Direction: $altitude / $direction\n";	
 	    $msg .= sprintf "Date and Time: @date\n"; 
-	    $msg .= sprintf "Check http://asc.harvard.edu/mta/RT/acis/www/acis-mean.html for latest info.\n";
+	    $msg .= sprintf "Check ".$Full_URL." for latest info.\n";
 	  }elsif ($id eq "TXINGS")
           {
 	    $msg = sprintf "\n$host - LIMITPAGER ACIS TXINGS ALERT During Current COMM Pass!\n"; 
@@ -928,7 +938,7 @@ if ($diff <= 0.09)
 	    $msg .= sprintf "******************************\n";
 	    $msg .= sprintf "Current Altitude / Direction: $altitude / $direction\n";	
 	    $msg .= sprintf "Date and Time: @date\n"; 
-	    $msg .= sprintf "Check http://asc1.cfa.harvard.edu/acis/RT/acis-mean.html for latest info.\n";
+	    $msg .= sprintf "Check ".$Full_URL." for latest info.\n";
  	  }
 	else   # neither DITHER nor TXINGS - general MSID violation
 	  {
@@ -940,7 +950,7 @@ if ($diff <= 0.09)
 	    $msg .= sprintf "Current OBSID: $obsid\n";
 	    $msg .= sprintf "Current Altitude / Direction: $altitude / $direction\n";	
 	    $msg .= sprintf "Date and Time: @date\n"; 
-	    $msg .= sprintf "Check http://asc.harvard.edu/mta/RT/acis/www/acis-mean.html for latest info.\n";
+	    $msg .= sprintf "Check ".$Full_URL." for latest info.\n";
 	  } # END neither DITHER nor TXINGS - general MSID violation
 	
         #
@@ -957,7 +967,7 @@ if ($diff <= 0.09)
 	   # the loops
 	   foreach (@RedAlertTextList)
 	     {
-	       open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' $_");
+	       open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP! - Loop' $_");
                print MAIL $msg;
 	       close MAIL;
 
