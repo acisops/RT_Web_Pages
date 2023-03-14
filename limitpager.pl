@@ -128,6 +128,21 @@
 #         - Adding Jack Steiner
 #         - Moving Catherine back to cgrant@mit.edu
 #
+# Update: September 21, 2022
+#         limitpager_V2.3.pl
+#         - updated phone lists.
+
+# Update: October 24, 2022
+#         limitpager_V2.4.pl
+#         - Modified email and text alerts to space out the text alerts
+#           with a 10 second delay loop.
+#         - Added OpsGenie email addresses to the alert email and text
+#           lists
+#
+# Update: February 6, 2023
+#              limitpager_V2.5.pl
+#              - arranged for the URL specified in alert emails to be the one
+#                specific to the R/T machine that is issuing the alert email.
 #
 ###########################################################################
 
@@ -136,10 +151,15 @@ use Sys::Hostname;
 
 require "/export/acis-flight/UTILITIES/GetNodeName.pl";
 require "/export/acis-flight/UTILITIES/ReadLimitsFile.pl";
-
+require "/export/acis-flight/UTILITIES/GetUDP.pl";
 
 # Obtain the upcased node name
 $host = GetNodeName();
+
+# Read the values output by a call to GetUDP.pl
+($myAcornUDP, $myPmonUDP, $myVloc, $myBaseURL, $myPEloc) = GetUDP();
+
+my $Full_URL = "http:///".$myBaseURL."/acis-mean.html";
 
 # Read in the limits file data
 my %userlimits = ReadLimitsFile();
@@ -892,12 +912,11 @@ if ($diff <= 0.09)
 
         $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}";
         $AcisdudePhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}";
-
+        $MITPhone = "$PGFPhone, $JimFrancisPhone";
+	
 	# Set up arrays of addresses for Red and Yellow alerts
 	@RedAlertEmailList = ($AcisdudeEmail, $PGFEmail, $JimFrancisEmail, $BGoekeEmail);
 	@RedAlertTextList = ($AcisdudePhone, $PGFPhone, $JimFrancisPhone);
-	
-	@YellowAlertEmailList = ($OpsGenie_yellow_alert_addr, $AcisdudeEmail);
 
        #
        # Formulate the body of the email based upon whether it's a Dither, TXING or General MSID violation
@@ -911,7 +930,7 @@ if ($diff <= 0.09)
 	    $msg .= sprintf "Current OBSID: $obsid\n";
 	    $msg .= sprintf "Current Altitude / Direction: $altitude / $direction\n";	
 	    $msg .= sprintf "Date and Time: @date\n"; 
-	    $msg .= sprintf "Check http://asc.harvard.edu/mta/RT/acis/www/acis-mean.html for latest info.\n";
+	    $msg .= sprintf "Check ".$Full_URL." for latest info.\n";
 	  }elsif ($id eq "TXINGS")
           {
 	    $msg = sprintf "\n$host - LIMITPAGER ACIS TXINGS ALERT During Current COMM Pass!\n"; 
@@ -919,7 +938,7 @@ if ($diff <= 0.09)
 	    $msg .= sprintf "******************************\n";
 	    $msg .= sprintf "Current Altitude / Direction: $altitude / $direction\n";	
 	    $msg .= sprintf "Date and Time: @date\n"; 
-	    $msg .= sprintf "Check http://asc1.cfa.harvard.edu/acis/RT/acis-mean.html for latest info.\n";
+	    $msg .= sprintf "Check ".$Full_URL." for latest info.\n";
  	  }
 	else   # neither DITHER nor TXINGS - general MSID violation
 	  {
@@ -931,7 +950,7 @@ if ($diff <= 0.09)
 	    $msg .= sprintf "Current OBSID: $obsid\n";
 	    $msg .= sprintf "Current Altitude / Direction: $altitude / $direction\n";	
 	    $msg .= sprintf "Date and Time: @date\n"; 
-	    $msg .= sprintf "Check http://asc.harvard.edu/mta/RT/acis/www/acis-mean.html for latest info.\n";
+	    $msg .= sprintf "Check ".$Full_URL." for latest info.\n";
 	  } # END neither DITHER nor TXINGS - general MSID violation
 	
         #
@@ -940,15 +959,26 @@ if ($diff <= 0.09)
 	if ($code == 1)
           {
 	   # First send out all the emails in one go
-           open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' $RedAlertEmailList");
+           open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' @RedAlertEmailList");
 	   print MAIL $msg;
 	   close MAIL;
 
            # Now create a loop to send out all the texts serially with a 10 second delay between
 	   # the loops
-           #open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' $RedAlertList");
-	  # print MAIL $msg;
-	   #close MAIL;
+	   foreach (@RedAlertTextList)
+	     {
+	       open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP! - Loop' $_");
+               print MAIL $msg;
+	       close MAIL;
+
+	       # Delay for 10 seconds
+	       sleep(10);
+	     } # END foreach (@RedAlertTextList}
+
+	   # Send the red alert out via OpsGenie
+           open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' $OpsGenie_red_alert_addr");
+	   print MAIL $msg;
+	   close MAIL;
 
            # Test list - just me
 	   #open(MAIL, "|mailx -s 'TEST Limit Pager - RED! ALERT! $host - TEST ACIS LIMIT TRIP!' $JustMe ");
