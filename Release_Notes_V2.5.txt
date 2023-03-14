@@ -37,7 +37,7 @@ https://github.com/acisops/RT_Web_Pages/pull/1
 Testing:
 ======== 
 
-Program tests were carried out running a version during comms to
+Unit and functional tests were carried out running a version during comms to
 assure that the emails and texts get through.  The 1PIN1AT "heartbeat"
 emails arrived every comm from both OpsGenie and the email systems
 and contain the URL for that machine's R/T web page..
