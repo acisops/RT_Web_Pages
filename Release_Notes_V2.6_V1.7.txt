@@ -20,8 +20,11 @@ The update to limitpager in this PR consisted of adding Jim Francis to the alert
 acis-P3-fluence.pl is run as a cron job and periodically calculates the attenuated
 fluence for the present orbit. If the fluence exceeds 1.0e+09, an email is sent
 out to ACIS Operations, and the message  contains the flux and fluence values.
-For this update,  Jim Francis was added to the email list. In addition utilization
-of the OpsGenie  system was added to the email alerts.
+For this update,  Jim Francis was added to the email list. Also, utilization
+of the OpsGenie  system was added to the email alerts. In addition, a -t switch was
+added to the command line so that test values would be used for flux values rather
+than the production values. This allows testing of the email systems. The program
+was run from the command line for testing.
 
 
 
@@ -36,20 +39,20 @@ https://github.com/acisops/RT_Web_Pages/pull/2
 Testing:
 ======== 
 
-Unit and functional tests for limitpager were carried out running a version during
-comms to assure that the emails and texts get through.  The 1PIN1AT "heartbeat"
-emails arrived every comm from both OpsGenie and the email systems
-and contain the URL for that machine's R/T web page.
-Unit tests were carried out to ensure the R/T web page URL displayed is
-the correct one for each R/T computer.
+Tests for limitpager were carried out running the new version of the program
+from the command line and during comms to assure that the emails and texts were sent
+correctly.  The program was also run as a cron job.  The 1PIN1AT "heartbeat" emails
+arrived every comm from both OpsGenie and the email systems. 
 
-Unit and functional tests for acis-P3-fluence were carried out by running a version
-of the new code with a very low fluence limit (1.0) to assure that emails are sent out.
+Tests for acis-P3-fluence were carried out by running a version of the new code, from
+the command line,  with and without the -t switch, and as an ongoing cron job.   
 
-All emails were received as expected.
+All emails were received as expected for both programs.
 
 All tests passed.
 
+There is no real opportunity for sub module unit testing: the programs were tested as a whole to
+determine if the -t switch worked correctly and that every email recipient received their emails.
 
 
 Interface impacts

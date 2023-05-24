@@ -46,20 +46,38 @@
 #              - Added Jim Francis to the alert list
 #              - Added OpsGenie as an emailing method
 #              - Fixed typos in comments
+#              - added -T switch to allow testing with lower limit thresholds.
 #
+################################################################################
 use Fcntl qw(:DEFAULT :flock);
 use Sys::Hostname;
+use Getopt::Std;
+use Getopt::Long;
+
+# initialize test flag to False or No.
+$test_flag = 0;
+    
+# Get any command line options
+GetOptions( 't' => \$test_flag);         # Test flag to indicate program should use test values
+
+# If this is not a test run, set the values for fluence limit and bogus P3 delta limit to
+# their production values
+if ($test_flag == 0)
+  {
+    $flim = 1e9;          # Fluence alert limit
+    $bogus_p3_delta_limit = 1.0e+05;  # Production bogus delta value
+  }
+else # Otherwise use the values for testing
+  {
+    $flim = 1.0;
+    $bogus_p3_delta_limit = 1.0;
+  }
 
 # Get local machine name - up case it
 $host = uc(hostname() );
 
 # Set the base path
 $pathroot = "/export/acis-flight/FLU-MON/";
-
-#
-# Bogus limit initialization
-#
-$bogus_p3_delta_limit = 1.0e+05;
 
 $fluence_file = $pathroot."ACE-flux.dat";
 $acisflux_file = $pathroot."ACIS-FLUENCE.dat";
@@ -550,11 +568,6 @@ close(OUT);
 @pal = split ' ',<AF> if (open AF, $alert_file);
 print STDERR "$host - No ACIS alert information found in $alert_file\n" if !@pal;
 
-$flim = 1e9;          # fluence limit
-
-# TEST purposes
-#$flim = 1.0;
-
 $scalef = 3;          # scale factor between successive alert thresholds
 $Nalerts = 1;         # maximum number of alert messages
 $Palert = 30*60;      # 30 minute alert interval (seconds)
@@ -664,7 +677,7 @@ sub send_email
    $JimFrancisEmail = "francisj\\\@mit.edu";
    $JimFrancisPhone = "7742702359\\\@msg.fi.google.com";
    
-   $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}, ${$JimFrancisEmail}";
+   $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}, ${JimFrancisEmail}";
 
    $AcisdudeEmailPhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}, ${JimFrancisPhone}, ${AcisdudeEmail}";
 
@@ -726,7 +739,11 @@ sub send_email_to_acisdude
    $JackSteinerEmail = "James.Steiner\\\@cfa.harvard.edu";
    $JackSteinerPhone = "6176809306\\\@vtext.com";
 
-   $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}, ${$JimFrancisEmail}";
+   $JimFrancisEmail = "francisj\\\@mit.edu";
+   $JimFrancisPhone = "7742702359\\\@msg.fi.google.com";
+
+   $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}, ${JimFrancisEmail}";  
+   
    $AcisdudeEmailPhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}, ${JimFrancisPhone}, ${AcisdudeEmail}";
 
   #
