@@ -1,0 +1,75 @@
+Change Description
+==================
+
+limitpager.pl is a Perl program, run as a cron job, which runs on each of the 4
+ACIS Ops Real Time monitoring computers. The instances of limitpager on
+each of the 4 machines are identical.
+
+When we are in Real Time Comm with Chandra, Limitpager accesses the real
+time data coming down from the spacecraft and checks several MSID's in
+order to determine if those values are within the Caution and Warning limits.
+
+One ACIS MSID: 1PIN1AT has a faulty transducer and emits a value above
+the Caution High limit. This is duly reported by limitpager in an
+email.  This is a known fault, and is ignored by the ACIS team, but is
+used as a "heartbeat" check of limitpager, the 4 machines limitpager
+runs on,  the email system and the network.
+
+The update to limitpager in this PR consisted of adding Jim Francis to the alert list.
+
+acis-P3-fluence.pl is run as a cron job and periodically calculates the attenuated
+fluence for the present orbit. If the fluence exceeds 1.0e+09, an email is sent
+out to ACIS Operations, and the message  contains the flux and fluence values.
+For this update,  Jim Francis was added to the email list. There are two email
+alerts sent out - one for exceeding 1.0e+09 for the orbit and one for when a clearly
+bogus flux value is reported by ACE.  Also, utilization of the OpsGenie  system was
+added to the email alerts. In addition, a -t switch was added to the command line
+so that test values would be used for flux values rather than the production values.
+This allows testing of the email systems. 
+
+
+
+Files Changed or added:
+=======================
+
+
+The updates can be seen here:
+
+https://github.com/acisops/RT_Web_Pages/pull/2
+
+Testing:
+======== 
+
+Tests for limitpager were carried out running the new version of the program
+from the command line and during comms to assure that the emails and texts were sent
+correctly.  The program was also run as a cron job.  The 1PIN1AT "heartbeat" emails
+arrived every comm from both OpsGenie and the email systems. 
+
+Tests for acis-P3-fluence were carried out by running a version of the new code, from
+the command line,  with and without the -t switch, and as an ongoing cron job, in production mode.   
+
+All emails were received as expected for both programs.
+
+All tests passed.
+
+There is no real opportunity for sub module unit testing: the programs were tested as a whole to
+determine if the -t switch worked correctly and that every email recipient received their emails.
+
+
+Interface impacts
+=================
+
+None
+
+
+Review
+====== 
+
+ACIS Ops
+
+
+Deployment Plan
+===============
+
+Will be deployed after FSDS approval.
+

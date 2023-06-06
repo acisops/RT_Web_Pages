@@ -144,6 +144,12 @@
 #              - arranged for the URL specified in alert emails to be the one
 #                specific to the R/T machine that is issuing the alert email.
 #
+#  Update: May 3, 2023
+#                limitpager_V2.6.pl
+#                Gregg Germain
+#                - Adding Jim Francis to the acisdude lists which brings him into the yellow alerts lists
+#                - Removing explicit  Jim Francis addresses from the red alert lists
+#                  as he's now in the acisdude lists
 ###########################################################################
 
 # use warnings;
@@ -910,13 +916,13 @@ if ($diff <= 0.09)
 	$OpsGenie_yellow_alert_addr = "acis_yellow_alert\\\@alrmns.opsgenie.net";
 	$OpsGenie_red_alert_addr = "acis_red_alert\\\@alrmns.opsgenie.net";
 
-        $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}";
-        $AcisdudePhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}";
+        $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}, ${JimFrancisEmail}";
+        $AcisdudePhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}, ${JimFrancisPhone}";
         $MITPhone = "$PGFPhone, $JimFrancisPhone";
 	
 	# Set up arrays of addresses for Red and Yellow alerts
-	@RedAlertEmailList = ($AcisdudeEmail, $PGFEmail, $JimFrancisEmail, $BGoekeEmail);
-	@RedAlertTextList = ($AcisdudePhone, $PGFPhone, $JimFrancisPhone);
+	@RedAlertEmailList = ($AcisdudeEmail, $PGFEmail,  $BGoekeEmail);
+	@RedAlertTextList = ($AcisdudePhone, $PGFPhone);
 
        #
        # Formulate the body of the email based upon whether it's a Dither, TXING or General MSID violation
