@@ -21,7 +21,7 @@ Files Changed or added:
 
 The updates can be seen here:
 
-https://github.com/acisops/RT_Web_Pages/pull/XXXXXXXXXX
+https://github.com/acisops/RT_Web_Pages/pull/3
 
 Testing:
 ======== 
