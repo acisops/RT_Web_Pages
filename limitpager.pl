@@ -150,6 +150,12 @@
 #                - Adding Jim Francis to the acisdude lists which brings him into the yellow alerts lists
 #                - Removing explicit  Jim Francis addresses from the red alert lists
 #                  as he's now in the acisdude lists
+#
+#  Update: October 31, 2024
+#                limitpager_V2.7.pl
+#                Gregg Germain
+#                - Removing VTEXT addresses from alerts
+#                  
 ###########################################################################
 
 # use warnings;
@@ -897,9 +903,6 @@ if ($diff <= 0.09)
         $DickEEmail = "richard.j.edgar\\\@gmail.com";
         $DickEPhone = "6178668615\\\@tmomail.net";
 
-        $RoyceBEmail = "buehler\\\@space.mit.edu";
-        $RoyceBPhone = "6178518470\\\@vtext.com";
-
         $PGFEmail = "pgf\\\@space.mit.edu";
         $PGFPhone = "6179971875\\\@vtext.com";
 
@@ -916,13 +919,15 @@ if ($diff <= 0.09)
 	$OpsGenie_yellow_alert_addr = "acis_yellow_alert\\\@alrmns.opsgenie.net";
 	$OpsGenie_red_alert_addr = "acis_red_alert\\\@alrmns.opsgenie.net";
 
-        $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail}, ${RoyceBEmail}, ${JohnZEmail}, ${JackSteinerEmail}, ${JimFrancisEmail}";
-        $AcisdudePhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}, ${JimFrancisPhone}";
-        $MITPhone = "$PGFPhone, $JimFrancisPhone";
+        $AcisdudeEmail = "${GreggEmail}, ${PaulPEmail}, ${CatherineGEmail},  ${JohnZEmail}, ${JackSteinerEmail}, ${JimFrancisEmail}";
+	
+        #$AcisdudePhone = "${GreggPhone}, ${PaulPPhone}, ${CatherineGPhone}, ${JohnZPhone}, ${JackSteinerPhone}, ${JimFrancisPhone}";
+	
+        #$MITPhone = "$PGFPhone, $JimFrancisPhone";
 	
 	# Set up arrays of addresses for Red and Yellow alerts
 	@RedAlertEmailList = ($AcisdudeEmail, $PGFEmail,  $BGoekeEmail);
-	@RedAlertTextList = ($AcisdudePhone, $PGFPhone);
+	#@RedAlertTextList = ($AcisdudePhone, $PGFPhone);
 
        #
        # Formulate the body of the email based upon whether it's a Dither, TXING or General MSID violation
@@ -969,18 +974,6 @@ if ($diff <= 0.09)
 	   print MAIL $msg;
 	   close MAIL;
 
-           # Now create a loop to send out all the texts serially with a 10 second delay between
-	   # the loops
-	   foreach (@RedAlertTextList)
-	     {
-	       open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP! - Loop' $_");
-               print MAIL $msg;
-	       close MAIL;
-
-	       # Delay for 10 seconds
-	       sleep(10);
-	     } # END foreach (@RedAlertTextList}
-
 	   # Send the red alert out via OpsGenie
            open(MAIL, "|mailx -s 'Limit Pager RED ALERT - $host - ACIS LIMIT TRIP!' $OpsGenie_red_alert_addr");
 	   print MAIL $msg;
@@ -988,9 +981,9 @@ if ($diff <= 0.09)
 
            # Test list - just me
 	   #open(MAIL, "|mailx -s 'TEST Limit Pager - RED! ALERT! $host - TEST ACIS LIMIT TRIP!' $JustMe ");
- 	 }
+ 	  }
 	else # Else it's a YELLOW ALERT
-         {
+          {
            #
            # Operational List
 	   #
