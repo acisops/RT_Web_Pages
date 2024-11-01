@@ -1,0 +1,56 @@
+Change Description
+==================
+
+limitpager.pl is a Perl program which runs as a cron job on each of the 4
+ACIS Ops Real Time monitoring computers. The instances of limitpager on
+each of the 4 machines are identical.
+
+When we are in Real Time Comm with Chandra, limitpager accesses the real
+time data coming down from the spacecraft and checks several MSID's in
+order to determine if those values are within the Caution and Warning limits.
+If a caution limit is violated, alerts are sent to the ACIS Ops team via direct email and OpsGenie.
+In the case of a warning limit violation, limitpager sends an email,
+an SMS alert via vtext emails and OpsGenie.  ACIS Ops decided to remove the vtext emails since
+they are less reliable and redundant.
+
+
+
+Files Changed or added:
+=======================
+
+
+The updates can be seen here:
+
+https://github.com/acisops/RT_Web_Pages/pull/XXXXXXXXXX
+
+Testing:
+======== 
+
+Tests for limitpager were carried out running the new version of the program
+on aciscdp-v during comms to assure that the emails and texts were sent
+correctly.  To generate a red alert, the aciscdp-v  limit file, used by limitpager, was
+temporarily modified to adjust the 1PIN1AT limit to force a red alert.
+
+All emails were received as expected - all tests passed.
+
+Once the tests were completed the production limit file  and production limitpager.pl file
+was restored.
+
+
+Interface impacts
+=================
+
+None
+
+
+Review
+====== 
+
+ACIS Ops
+
+
+Deployment Plan
+===============
+
+Will be deployed after FSDS approval.
+
